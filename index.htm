@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="css/game.css"/>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no">
+    <title>The needle in the haystack</title>
+</head>
+<body>
+    <div id="mainContainer" class="plancher texte">
+        <img class="title" src="images/title.png">
+        <div class="pleaseWait texte">
+            <img src="images/spinner.png">
+            <p>Loading...</p>
+        </div>
+        <p class="timer texte"></p>
+        <div class="modal" hidden>
+            <div class="modal-content askPseudo texte" hidden></div>
+            <div class="modal-content scorescreen texte" hidden>
+                <div class="scorelines">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="antiresize" hidden>
+        <!-- <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="lightgrey" d="M256 8C119.034 8 8 119.033 8 256s111.034 248 248 248 248-111.034 248-248S392.967 8 256 8zm130.108 117.892c65.448 65.448 70 165.481 20.677 235.637L150.47 105.216c70.204-49.356 170.226-44.735 235.638 20.676zM125.892 386.108c-65.448-65.448-70-165.481-20.677-235.637L361.53 406.784c-70.203 49.356-170.226 44.736-235.638-20.676z"></path></svg> -->
+        <img src="images/ban.svg">
+        <p>Resize is not possible while playing</p>
+    </div>
+    
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/html2canvas.min.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
