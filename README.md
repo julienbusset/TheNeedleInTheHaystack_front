@@ -3,6 +3,7 @@
 This game has a back-end and a front-end. Only The front-end part is on GitHub.
 The back-end is a REST API developped with Symfony4.
 The front-end is a javascript / jQuery web app.
+It is still in development, but the main features are to be tested.
 
 ## News
 It works! You can give it a try, and tell me about the gameplay and device compatibility.
