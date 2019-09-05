@@ -21,7 +21,6 @@
 @media only screen and (max-width: 600px) {
     .plancher {
         background-image: url('../images/plancher/plancher600.jpg');
-        background-repeat: repeat;
     }
 
     .texte {
@@ -38,7 +37,6 @@
 @media only screen and (min-width: 600px) {
     .plancher {
         background-image: url('../images/plancher/plancher768.jpg');
-        background-repeat: repeat;
     }
 
     .texte {
@@ -55,7 +53,6 @@
 @media only screen and (min-width: 768px) {
     .plancher {
         background-image: url('../images/plancher/plancher992.jpg');
-        background-repeat: repeat;
     }
 
     .texte {
@@ -72,7 +69,6 @@
 @media only screen and (min-width: 992px) {
     .plancher {
         background-image: url('../images/plancher/plancher1200.jpg');
-        background-repeat: repeat;
     }
 
     .texte {
@@ -89,7 +85,6 @@
 @media only screen and (min-width: 1200px) {
     .plancher {
         background-image: url('../images/plancher/plancher1600.jpg');
-        background-repeat: repeat;
     }
 
     .texte {
@@ -106,7 +101,6 @@
 @media only screen and (min-width: 1600px) {
     .plancher {
         background-image: url('../images/plancher/plancher3840.jpg');
-        background-repeat: repeat;
     }
 
     .texte {
@@ -129,6 +123,12 @@ html, body, #mainContainer {
     height: 100%;
     width: 100%;
     background-color: rgb(82, 42, 13); /* Fallback value */
+}
+
+/* for main background */
+.plancher {
+    background-size: 100% auto;
+    background-repeat: repeat-y;
 }
 
 .texte {
