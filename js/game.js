@@ -35,7 +35,8 @@ const DELTA_TIMER = 34; // in ms (17 is for 60fps)
 const DELTA_DRAGGING = 300; // in ms
 const SCORES_RANGE = 5;
 const PSEUDO_SIZE = 6;
-const HAY_NUMBER = 200;
+// const HAY_NUMBER = 200;
+const HAY_DENSITY = 0.0024;
 // prod
 // const SITE_URL = "https://test.hyperbolicworld.fr/";
 // const SITE_BASE_URI = "/"; // to extract numbers from URI
@@ -50,7 +51,7 @@ const HAY_IMG_FILENAME = "hay.png";
 
 // variables
 var hayIdDispo = 0;
-var hayNumber = HAY_NUMBER; // must be changed depending on device screen size
+var hayNumber = 1500; // 1500 is default, but must be changed depending on device screen size
 
 var mainHeight; // set after initialization
 var mainWidth; // set after initialization
@@ -105,6 +106,9 @@ $(document).ready(function () {
 
     // get window's size and set mainContainer's size
     getWindowsSize();
+
+    // calculate hay number with density and window area
+    hayNumber = calculateHayNumber();
 
     // check the URI
     var extractedId = extractURI(window.location.pathname);
@@ -1033,3 +1037,8 @@ function enableResizing() {
     $(window).off("resize");
 }
 
+function calculateHayNumber() {
+    var area = mainHeight * mainWidth;
+    console.log(Math.ceil(area * HAY_DENSITY));
+    return Math.ceil(area * HAY_DENSITY);
+}
