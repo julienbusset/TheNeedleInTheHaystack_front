@@ -164,6 +164,9 @@ function letsplay() {
                 clearInterval(timerController);
                 displayFinalTime(); // to display it frame perfect!
                 regAndDisplayScores();
+                // on smartphones, the screen is reduced when you enter the name
+                // due to the virtual keyboard
+                enableResizing();
             });
 
             // Timer starts!
@@ -1024,5 +1027,9 @@ function disableResizing() {
             $(".antiresize").show();
         }
     });
+}
+
+function enableResizing() {
+    $(window).off("resize");
 }
 
