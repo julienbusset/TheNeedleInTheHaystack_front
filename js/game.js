@@ -168,6 +168,9 @@ function letsplay() {
                 clearInterval(timerController);
                 displayFinalTime(); // to display it frame perfect!
                 regAndDisplayScores();
+                // on smartphones, the screen is reduced when you enter the name
+                // due to the virtual keyboard
+                enableResizing();
             });
 
             // Timer starts!
@@ -1030,9 +1033,12 @@ function disableResizing() {
     });
 }
 
+function enableResizing() {
+    $(window).off("resize");
+}
+
 function calculateHayNumber() {
     var area = mainHeight * mainWidth;
     console.log(Math.ceil(area * HAY_DENSITY));
     return Math.ceil(area * HAY_DENSITY);
 }
-
