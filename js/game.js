@@ -1015,6 +1015,7 @@ function hayOrNeedleToJSON(hayOrNeedle) {
     return JSON.parse(JSON.stringify(hayOrNeedle));
 }
 
+// to disable window resizing while playing
 function disableResizing() {
     var remMainHeight = mainHeight;
     var remMainWidth = mainWidth;
@@ -1033,10 +1034,12 @@ function disableResizing() {
     });
 }
 
+// to re-enable it when the game is finished (BUGFIX)
 function enableResizing() {
     $(window).off("resize");
 }
 
+// calculate hay number from density and window area
 function calculateHayNumber() {
     var area = mainHeight * mainWidth;
     console.log(Math.ceil(area * HAY_DENSITY));
