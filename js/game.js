@@ -48,6 +48,7 @@ const API_URL = "https://127.0.0.1:8000/"
 const IMG_DIR = "images/";
 const NEEDLE_IMG_FILENAME = "needle.png";
 const HAY_IMG_FILENAME = "hay.png";
+const FS_ID = "fs";
 
 // variables
 var hayIdDispo = 0;
@@ -194,7 +195,7 @@ function showIdFinishScreen(id) {
             // make the canvas rescaling dynamically
             $(window).resize(function () {
                 getWindowsSize();
-                rescaleCanvas();
+                rescaleFS();
             });
 
             stopWaiting();
@@ -784,8 +785,11 @@ function recreateFS() {
     var widthRatio = mainWidth / fsWidth;
     var ratio = Math.min(heightRatio, widthRatio);
 
+    // make the DOM from finish screen
+    var dom = makeDOM(FS_ID, fsWidth, fsHeight);
+    rescaleDOM();
     // make the canvas from finish screen
-    makeCanvas(finishScreen, fsWidth, fsHeight);
+    // makeCanvas(dom);
 }
 
 function recreateNeedle(needle) {
@@ -800,7 +804,6 @@ function recreateItem(item, imgFilename) {
     drawItemInCanvas(item, imgFilename);
 }
 
-
 function getItemFromSavedFS(item) {
     var id = item.id;
     var posX = item.x;
@@ -811,38 +814,27 @@ function getItemFromSavedFS(item) {
     return new HayOrNeedle(id, posX, posY, angle, zIndex);
 }
 
-/*******
- * IX. Canva utils
- */
-function makeCanvas(finishScreen, width, height) {
-    // first, make the DOM
-    var tempDiv = makeDOM(finishScreen, width, height);
-
-    // regarder les options pour rajouter :
-    // - le texte de prise en charge si ça marche pas (voir le DOM d'origine, d'ailleurs)
-    // on doit envoyer un élément, pas un objet jQuery
-    html2canvas(tempDiv[0], {
-        backgroundColor: "transparent",
-        imageTimeout: 15000,
-        logging: true,// remove for prod
-    }).then(function (canvas) {
-        $("#mainContainer").prepend(canvas);
-        tempDiv.hide();
-        rescaleCanvas();
-    });
+function rescaleFS() {
+    // rescaleCanvas();
+    rescaleDOM();
 }
 
-function makeDOM(finishScreen, width, height) {
-    var dom = '<div id="temp"></div>';
+function makeDOM(id, width, height) {
+    // tempFS to sort finishScreen for further use
+    var tempFS = new Array();
+    var dom = '<div id="' + id + '"></div>';
     $("body").prepend(dom);
-    var tempDiv = $("#temp");
+    var tempDiv = $("#" + id);
     tempDiv.css({
+        "position": "fixed",
         "width": width,
         "height": height
     });
 
     $.each(finishScreen, function (index, item) {
         if (item !== undefined) {
+            // remove "#" before storing it in the array
+            tempFS[item.id.substr(1, item.id.length)] = item;
             if (item.id == "#needle") {
                 createNeedleDOM(tempDiv);
                 moveTo(item.id, item.y, item.x);
@@ -856,14 +848,54 @@ function makeDOM(finishScreen, width, height) {
         }
     });
 
+    finishScreen = tempFS;
+
     return tempDiv;
 }
 
+function rescaleDOM() {
+    var dom = $("#" + FS_ID);
+    var ratio = rescalingFactor();
+    var newWidth = Math.ceil(HAY_WIDTH * ratio);
+
+    // TODO rescale all elements of the DOM:
+    dom.children().each(function (index, element) {
+        // - get the corresponding element in finishScreen
+        var fsElement = finishScreen[element.id];
+        // - rescale the sprite
+        rescaleSprite(element, newWidth);
+        // - move the element to rescaled position
+        moveElement(element, fsElement, ratio);
+    });
+}
+
+function rescaleSprite(sprite, newWidth) {
+    sprite.width = newWidth;
+}
+
+function moveElement(element, fsElement, ratio) {
+    element.style.left = (Math.ceil(fsElement.x * ratio)) + "px";
+    element.style.top = (Math.ceil(fsElement.y * ratio)) + "px";
+}
+
+/*******
+ * IX. Canva utils
+ */
+function makeCanvas(tempDiv) {
+    html2canvas(tempDiv[0], {
+        backgroundColor: "transparent",
+        imageTimeout: 15000,
+        logging: true,// remove for prod
+    }).then(function (canvas) {
+        $("#mainContainer").prepend(canvas);
+        tempDiv.hide();
+        rescaleCanvas();
+    });
+}
+
 function rescaleCanvas() {
-    // calculate rescaling factor (max factor from width and height rescale)
-    var heightRatio = mainHeight / fsHeight;
-    var widthRatio = mainWidth / fsWidth;
-    var ratio = Math.min(heightRatio, widthRatio);
+    // get rescaling factor
+    var ratio = rescalingFactor();
 
     $("canvas").css({
         "width": ratio * fsWidth,
@@ -1047,4 +1079,11 @@ function enableResizing() {
 function calculateHayNumber() {
     var area = mainHeight * mainWidth;
     return Math.ceil(area * HAY_DENSITY);
+}
+
+function rescalingFactor() {
+    // calculate rescaling factor (max factor from width and height rescale)
+    var heightRatio = mainHeight / fsHeight;
+    var widthRatio = mainWidth / fsWidth;
+    return Math.min(heightRatio, widthRatio);
 }
