@@ -51,7 +51,7 @@ const HAY_IMG_FILENAME = "hay.png";
 
 // variables
 var hayIdDispo = 0;
-var hayNumber = 1500; // 1500 is default, but must be changed depending on device screen size
+var hayNumber = 1500; // 1500 is default, but it is recalculated from density
 
 var mainHeight; // set after initialization
 var mainWidth; // set after initialization
