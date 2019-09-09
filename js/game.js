@@ -51,7 +51,7 @@ const HAY_IMG_FILENAME = "hay.png";
 
 // variables
 var hayIdDispo = 0;
-var hayNumber = 1500; // 1500 is default, but must be changed depending on device screen size
+var hayNumber = 1500; // 1500 is default, but it is recalculated from density
 
 var mainHeight; // set after initialization
 var mainWidth; // set after initialization
@@ -155,29 +155,26 @@ function letsplay() {
     // handle dragging
     handleDraggables();
 
-    // wait for the images are loaded to show it all
+    // wait that everything is on screen to build the needle and so on
     allLoaded().then(function () {
-        // wait that everything is on screen to build the needle and next
-        $(window).one("load", function () {
-            stopWaiting();
-            createNeedle();
+        stopWaiting();
+        createNeedle();
 
-            // click the needle to win
-            $("#needle").one("click touchstart", function () {
-                timeToWin = Date.now() - start;
-                clearInterval(timerController);
-                displayFinalTime(); // to display it frame perfect!
-                regAndDisplayScores();
-                // on smartphones, the screen is reduced when you enter the name
-                // due to the virtual keyboard
-                enableResizing();
-            });
-
-            // Timer starts!
-            prepareTimer();
-            start = Date.now();
-            timerRoutine();
+        // click the needle to win
+        $("#needle").one("click touchstart", function () {
+            timeToWin = Date.now() - start;
+            clearInterval(timerController);
+            displayFinalTime(); // to display it frame perfect!
+            regAndDisplayScores();
+            // on smartphones, the screen is reduced when you enter the name
+            // due to the virtual keyboard
+            enableResizing();
         });
+
+        // Timer starts!
+        prepareTimer();
+        start = Date.now();
+        timerRoutine();
     });
 }
 
@@ -225,13 +222,20 @@ async function preloadImg() {
 async function allLoaded() {
     return Promise.all([
         needleLoaded(),
-        hayLoaded()
+        hayLoaded(),
+        windowLoaded()
     ]);
 }
 
 function loading() {
     $(".title").css("zIndex", hayNumber + 1000);
     $(".pleaseWait").css("zIndex", hayNumber + 1001);
+}
+
+function windowLoaded() {
+    $(window).on("load", function () {
+        return Promise.resolve();
+    });
 }
 
 /******
@@ -821,7 +825,7 @@ function makeCanvas(finishScreen, width, height) {
         backgroundColor: "transparent",
         imageTimeout: 15000,
         logging: true,// remove for prod
-    }).then(function(canvas) {
+    }).then(function (canvas) {
         $("#mainContainer").prepend(canvas);
         tempDiv.hide();
         rescaleCanvas();
@@ -912,7 +916,7 @@ function centerDiv(div) {
     // position at centre, remove half width / height of screen
     var leftOffset = Math.round((mainWidth - div.outerWidth()) / 2);
     var bottomOffset = Math.round((mainHeight - div.outerHeight()) / 2);
-    
+
     div.css({
         "bottom": bottomOffset,
         "left": leftOffset
@@ -1019,8 +1023,8 @@ function hayOrNeedleToJSON(hayOrNeedle) {
 function disableResizing() {
     var remMainHeight = mainHeight;
     var remMainWidth = mainWidth;
-    
-    $(window).resize(function() {
+
+    $(window).resize(function () {
         getWindowsSize();
         if (mainHeight == remMainHeight && mainWidth == remMainWidth) {
             $(".antiresize").hide();
@@ -1042,6 +1046,5 @@ function enableResizing() {
 // calculate hay number from density and window area
 function calculateHayNumber() {
     var area = mainHeight * mainWidth;
-    console.log(Math.ceil(area * HAY_DENSITY));
     return Math.ceil(area * HAY_DENSITY);
 }
