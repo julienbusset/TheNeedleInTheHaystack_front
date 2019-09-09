@@ -24,8 +24,7 @@
  *  VIII. Finish Screen manager
  *      1. get the finish screen at the end of a game
  *      2. Reconstitution of a saved finish screen
- *  IX.   Canva utils
- *  X.    Other utils
+ *  IX.   Other utils
  * 
  */
 // constants
@@ -40,10 +39,9 @@ const HAY_DENSITY = 0.0024;
 // prod
 // const SITE_URL = "https://test.hyperbolicworld.fr/";
 // const SITE_BASE_URI = "/"; // to extract numbers from URI
+// const API_URL = "https://apitest.hyperbolicworld.fr/";
 const SITE_URL = "http://localhost:8888/TNITH/front/";
 const SITE_BASE_URI = "/TNITH/front/";
-// prod
-// const API_URL = "https://apitest.hyperbolicworld.fr/";
 const API_URL = "https://127.0.0.1:8000/"
 const IMG_DIR = "images/";
 const NEEDLE_IMG_FILENAME = "needle.png";
@@ -773,35 +771,14 @@ function recreateFS() {
             fsHeight = item.mainHeight;
         } else {
             // rearrange in the order of z-index
-            // to ease drawing order in the canvas
-            // (in DOM order, built in zIndex order)
+            // to ease drawing order
             finishScreen[item.zIndex] = getItemFromSavedFS(item);
         }
     });
 
-    // calculate scaling ratio to fit the window
-    // (max factor from width and height rescale)
-    var heightRatio = mainHeight / fsHeight;
-    var widthRatio = mainWidth / fsWidth;
-    var ratio = Math.min(heightRatio, widthRatio);
-
     // make the DOM from finish screen
     var dom = makeDOM(FS_ID, fsWidth, fsHeight);
     rescaleDOM();
-    // make the canvas from finish screen
-    // makeCanvas(dom);
-}
-
-function recreateNeedle(needle) {
-    recreateItem(needle, NEEDLE_IMG_FILENAME);
-}
-
-function recreateHay(hay) {
-    recreateItem(hay, HAY_IMG_FILENAME);
-}
-
-function recreateItem(item, imgFilename) {
-    drawItemInCanvas(item, imgFilename);
 }
 
 function getItemFromSavedFS(item) {
@@ -815,7 +792,6 @@ function getItemFromSavedFS(item) {
 }
 
 function rescaleFS() {
-    // rescaleCanvas();
     rescaleDOM();
 }
 
@@ -848,6 +824,7 @@ function makeDOM(id, width, height) {
         }
     });
 
+    // save the sorted fs in finishScreen
     finishScreen = tempFS;
 
     return tempDiv;
@@ -860,11 +837,11 @@ function rescaleDOM() {
 
     // TODO rescale all elements of the DOM:
     dom.children().each(function (index, element) {
-        // - get the corresponding element in finishScreen
+        // get the corresponding element in finishScreen
         var fsElement = finishScreen[element.id];
-        // - rescale the sprite
+        // rescale the sprite
         rescaleSprite(element, newWidth);
-        // - move the element to rescaled position
+        // move the element to rescaled position
         moveElement(element, fsElement, ratio);
     });
 }
@@ -878,39 +855,8 @@ function moveElement(element, fsElement, ratio) {
     element.style.top = (Math.ceil(fsElement.y * ratio)) + "px";
 }
 
-/*******
- * IX. Canva utils
- */
-function makeCanvas(tempDiv) {
-    html2canvas(tempDiv[0], {
-        backgroundColor: "transparent",
-        imageTimeout: 15000,
-        logging: true,// remove for prod
-    }).then(function (canvas) {
-        $("#mainContainer").prepend(canvas);
-        tempDiv.hide();
-        rescaleCanvas();
-    });
-}
-
-function rescaleCanvas() {
-    // get rescaling factor
-    var ratio = rescalingFactor();
-
-    $("canvas").css({
-        "width": ratio * fsWidth,
-        "height": ratio * fsHeight
-    });
-}
-
-function clearScreen() {
-    var canvas = $('canvas')[0];
-    var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
 /********
- * X. Other utils
+ * IX. Other utils
  */
 // to auto-increment z-index when used
 // and put the timer always on top
@@ -1081,6 +1027,8 @@ function calculateHayNumber() {
     return Math.ceil(area * HAY_DENSITY);
 }
 
+// calculate rescaling factor if the screen size is different
+// for the finish screen to display and the device's one
 function rescalingFactor() {
     // calculate rescaling factor (max factor from width and height rescale)
     var heightRatio = mainHeight / fsHeight;
