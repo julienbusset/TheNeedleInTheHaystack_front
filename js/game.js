@@ -178,26 +178,26 @@ function letsplay() {
 }
 
 // show the finish screen of given id
-function showIdFinishScreen(id) {
+async function showIdFinishScreen(id) {
     hideTitle(); // ?
 
     // get finish screen of given id
-    getFSFromId(id).done(function (fs) {
-        // and save it to reuse it when resizing the window
-        savedFS = fs[0].finishscreen;
+    var fs = await getFSFromId(id);
 
-        // when images are loaded, recreate the finish screen
-        allLoaded().then(function () {
-            recreateFS();
+    // and save it to reuse it when resizing the window
+    savedFS = fs[0].finishscreen;
 
-            // make the canvas rescaling dynamically
-            $(window).resize(function () {
-                getWindowsSize();
-                rescaleFS();
-            });
+    // when images are loaded, recreate the finish screen
+    allLoaded().then(function () {
+        recreateFS();
 
-            stopWaiting();
+        // make the canvas rescaling dynamically
+        $(window).resize(function () {
+            getWindowsSize();
+            rescaleFS();
         });
+
+        stopWaiting();
     });
 }
 
@@ -579,10 +579,10 @@ function regAndDisplayScores() {
         submitButton.attr("disabled", "disabled");
         pleaseWait();
         var pseudo = inputText.val();
-        var id = await registerScore(pseudo);
-    
-        var jsonScores = await getScoresAroundId(id);
         
+        var id = await registerScore(pseudo);
+        var jsonScores = await getScoresAroundId(id);
+
         askPseudo.hide();
         hideTimer();
         displayScores(jsonScores);
