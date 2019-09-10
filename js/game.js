@@ -575,18 +575,18 @@ function regAndDisplayScores() {
     var inputText = askPseudo.find("input:text[name='pseudo']");
 
     // do what you have to when the client submit
-    async function callbackWhenEvent() {
+    function callbackWhenEvent() {
         submitButton.attr("disabled", "disabled");
         pleaseWait();
         var pseudo = inputText.val();
-        var id = await registerScore(pseudo);
-    
-        var jsonScores = await getScoresAroundId(id);
-        
-        askPseudo.hide();
-        hideTimer();
-        displayScores(jsonScores);
-        stopWaiting();
+        registerScore(pseudo).done(function (id) {
+            getScoresAroundId(id).done(function (jsonScores) {
+                askPseudo.hide();
+                hideTimer();
+                displayScores(jsonScores);
+                stopWaiting();
+            });
+        });
     }
 
     // previous function triggered when
@@ -631,21 +631,14 @@ function askForPseudoScreen() {
     askPseudo.show();
 }
 
-async function registerScore(pseudo) {
+function registerScore(pseudo) {
     var score = {
         "time": timeToWin,
         "pseudo": pseudo,
         "finishscreen": finishScreenToJSON(finishScreen)
     };
 
-    var result;
-
-    try {
-        result = await regScore(score);
-        return result;
-    } catch (error) {
-        console.error(error);
-    }
+    return regScore(score);
 }
 
 function displayScores(jsonScores) {
@@ -693,24 +686,26 @@ function displayScores(jsonScores) {
 /***********
  * VII. Ajax
  */
-async function regScore(score) {
-    var result = await $.ajax({
+function regScore(score) {
+    return $.ajax({
         method: "POST",
         url: API_URL + "score",
         data: JSON.stringify(score)
     });
-
-    return result;
 }
 
-async function getScoresAroundId(id) {
-    var result = await $.get(API_URL + "score/" + id);
-
-    return result;
+function getScoresAroundId(id) {
+    return $.ajax({
+        method: "GET",
+        url: API_URL + "score/" + id
+    });
 }
 
-async function getFSFromId(id) {
-    var jsonResponse = await $.get(API_URL + "finishscreen/" + id);
+function getFSFromId(id) {
+    var jsonResponse = $.ajax({
+        method: "GET",
+        url: API_URL + "finishscreen/" + id,
+    });
 
     return jsonResponse;
 }
