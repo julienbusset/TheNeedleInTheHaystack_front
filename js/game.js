@@ -178,26 +178,26 @@ function letsplay() {
 }
 
 // show the finish screen of given id
-async function showIdFinishScreen(id) {
+function showIdFinishScreen(id) {
     hideTitle(); // ?
 
     // get finish screen of given id
-    var fs = await getFSFromId(id);
+    getFSFromId(id).done(function (fs) {
+        // and save it to reuse it when resizing the window
+        savedFS = fs[0].finishscreen;
 
-    // and save it to reuse it when resizing the window
-    savedFS = fs[0].finishscreen;
+        // when images are loaded, recreate the finish screen
+        allLoaded().then(function () {
+            recreateFS();
 
-    // when images are loaded, recreate the finish screen
-    allLoaded().then(function () {
-        recreateFS();
+            // make the canvas rescaling dynamically
+            $(window).resize(function () {
+                getWindowsSize();
+                rescaleFS();
+            });
 
-        // make the canvas rescaling dynamically
-        $(window).resize(function () {
-            getWindowsSize();
-            rescaleFS();
+            stopWaiting();
         });
-
-        stopWaiting();
     });
 }
 
@@ -579,14 +579,14 @@ function regAndDisplayScores() {
         submitButton.attr("disabled", "disabled");
         pleaseWait();
         var pseudo = inputText.val();
-
-        var id = await registerScore(pseudo);
-        var jsonScores = await getScoresAroundId(id);
-
-        askPseudo.hide();
-        hideTimer();
-        displayScores(jsonScores);
-        stopWaiting();
+        registerScore(pseudo).done(function (id) {
+            getScoresAroundId(id).done(function (jsonScores) {
+                askPseudo.hide();
+                hideTimer();
+                displayScores(jsonScores);
+                stopWaiting();
+            });
+        });
     }
 
     // previous function triggered when
