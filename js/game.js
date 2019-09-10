@@ -579,8 +579,8 @@ function regAndDisplayScores() {
         submitButton.attr("disabled", "disabled");
         pleaseWait();
         var pseudo = inputText.val();
+        
         var id = await registerScore(pseudo);
-
         var jsonScores = await getScoresAroundId(id);
 
         askPseudo.hide();
