@@ -24,8 +24,7 @@
  *  VIII. Finish Screen manager
  *      1. get the finish screen at the end of a game
  *      2. Reconstitution of a saved finish screen
- *  IX.   Canva utils
- *  X.    Other utils
+ *  IX.   Other utils
  * 
  */
 // constants
@@ -40,14 +39,14 @@ const HAY_DENSITY = 0.0024;
 // prod
 // const SITE_URL = "https://test.hyperbolicworld.fr/";
 // const SITE_BASE_URI = "/"; // to extract numbers from URI
+// const API_URL = "https://apitest.hyperbolicworld.fr/";
 const SITE_URL = "http://localhost:8888/TNITH/front/";
 const SITE_BASE_URI = "/TNITH/front/";
-// prod
-// const API_URL = "https://apitest.hyperbolicworld.fr/";
 const API_URL = "https://127.0.0.1:8000/"
 const IMG_DIR = "images/";
 const NEEDLE_IMG_FILENAME = "needle.png";
 const HAY_IMG_FILENAME = "hay.png";
+const FS_ID = "fs";
 
 // variables
 var hayIdDispo = 0;
@@ -194,7 +193,7 @@ function showIdFinishScreen(id) {
             // make the canvas rescaling dynamically
             $(window).resize(function () {
                 getWindowsSize();
-                rescaleCanvas();
+                rescaleFS();
             });
 
             stopWaiting();
@@ -772,34 +771,15 @@ function recreateFS() {
             fsHeight = item.mainHeight;
         } else {
             // rearrange in the order of z-index
-            // to ease drawing order in the canvas
-            // (in DOM order, built in zIndex order)
+            // to ease drawing order
             finishScreen[item.zIndex] = getItemFromSavedFS(item);
         }
     });
 
-    // calculate scaling ratio to fit the window
-    // (max factor from width and height rescale)
-    var heightRatio = mainHeight / fsHeight;
-    var widthRatio = mainWidth / fsWidth;
-    var ratio = Math.min(heightRatio, widthRatio);
-
-    // make the canvas from finish screen
-    makeCanvas(finishScreen, fsWidth, fsHeight);
+    // make the DOM from finish screen
+    var dom = makeDOM(FS_ID, fsWidth, fsHeight);
+    rescaleDOM();
 }
-
-function recreateNeedle(needle) {
-    recreateItem(needle, NEEDLE_IMG_FILENAME);
-}
-
-function recreateHay(hay) {
-    recreateItem(hay, HAY_IMG_FILENAME);
-}
-
-function recreateItem(item, imgFilename) {
-    drawItemInCanvas(item, imgFilename);
-}
-
 
 function getItemFromSavedFS(item) {
     var id = item.id;
@@ -811,38 +791,26 @@ function getItemFromSavedFS(item) {
     return new HayOrNeedle(id, posX, posY, angle, zIndex);
 }
 
-/*******
- * IX. Canva utils
- */
-function makeCanvas(finishScreen, width, height) {
-    // first, make the DOM
-    var tempDiv = makeDOM(finishScreen, width, height);
-
-    // regarder les options pour rajouter :
-    // - le texte de prise en charge si ça marche pas (voir le DOM d'origine, d'ailleurs)
-    // on doit envoyer un élément, pas un objet jQuery
-    html2canvas(tempDiv[0], {
-        backgroundColor: "transparent",
-        imageTimeout: 15000,
-        logging: true,// remove for prod
-    }).then(function (canvas) {
-        $("#mainContainer").prepend(canvas);
-        tempDiv.hide();
-        rescaleCanvas();
-    });
+function rescaleFS() {
+    rescaleDOM();
 }
 
-function makeDOM(finishScreen, width, height) {
-    var dom = '<div id="temp"></div>';
+function makeDOM(id, width, height) {
+    // tempFS to sort finishScreen for further use
+    var tempFS = new Array();
+    var dom = '<div id="' + id + '"></div>';
     $("body").prepend(dom);
-    var tempDiv = $("#temp");
+    var tempDiv = $("#" + id);
     tempDiv.css({
+        "position": "fixed",
         "width": width,
         "height": height
     });
 
     $.each(finishScreen, function (index, item) {
         if (item !== undefined) {
+            // remove "#" before storing it in the array
+            tempFS[item.id.substr(1, item.id.length)] = item;
             if (item.id == "#needle") {
                 createNeedleDOM(tempDiv);
                 moveTo(item.id, item.y, item.x);
@@ -856,29 +824,39 @@ function makeDOM(finishScreen, width, height) {
         }
     });
 
+    // save the sorted fs in finishScreen
+    finishScreen = tempFS;
+
     return tempDiv;
 }
 
-function rescaleCanvas() {
-    // calculate rescaling factor (max factor from width and height rescale)
-    var heightRatio = mainHeight / fsHeight;
-    var widthRatio = mainWidth / fsWidth;
-    var ratio = Math.min(heightRatio, widthRatio);
+function rescaleDOM() {
+    var dom = $("#" + FS_ID);
+    var ratio = rescalingFactor();
+    var newWidth = Math.ceil(HAY_WIDTH * ratio);
 
-    $("canvas").css({
-        "width": ratio * fsWidth,
-        "height": ratio * fsHeight
+    // TODO rescale all elements of the DOM:
+    dom.children().each(function (index, element) {
+        // get the corresponding element in finishScreen
+        var fsElement = finishScreen[element.id];
+        // rescale the sprite
+        rescaleSprite(element, newWidth);
+        // move the element to rescaled position
+        moveElement(element, fsElement, ratio);
     });
 }
 
-function clearScreen() {
-    var canvas = $('canvas')[0];
-    var ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function rescaleSprite(sprite, newWidth) {
+    sprite.width = newWidth;
+}
+
+function moveElement(element, fsElement, ratio) {
+    element.style.left = (Math.ceil(fsElement.x * ratio)) + "px";
+    element.style.top = (Math.ceil(fsElement.y * ratio)) + "px";
 }
 
 /********
- * X. Other utils
+ * IX. Other utils
  */
 // to auto-increment z-index when used
 // and put the timer always on top
@@ -1047,4 +1025,13 @@ function enableResizing() {
 function calculateHayNumber() {
     var area = mainHeight * mainWidth;
     return Math.ceil(area * HAY_DENSITY);
+}
+
+// calculate rescaling factor if the screen size is different
+// for the finish screen to display and the device's one
+function rescalingFactor() {
+    // calculate rescaling factor (max factor from width and height rescale)
+    var heightRatio = mainHeight / fsHeight;
+    var widthRatio = mainWidth / fsWidth;
+    return Math.min(heightRatio, widthRatio);
 }
