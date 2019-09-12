@@ -682,7 +682,7 @@ function displayScores(jsonScores, id) {
         sLines.append(toAppend);
     }
     // then show after
-    sLines.append('<pre>Support this game at Patreon</pre>');
+    sLines.append('<a href="https://www.patreon.com/beuj">Support this game at Patreon</a>');
     sLines.append('<p>refresh page to start a new game</p>');
     sLines.append('<a href="' + SITE_URL + id + '">Check and save your finish screen!</a>');
 
