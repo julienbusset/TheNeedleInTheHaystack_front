@@ -80,7 +80,7 @@ var beginScreen = new Array();
 var finishScreen = new Array();
 var savedFS; // the one we got from AJAX, to transform into regular finishScreen
 
-// for canvas
+// for finish screen display
 var fsWidth;
 var fsHeight;
 
@@ -803,7 +803,7 @@ function rescaleFS() {
 function makeDOM(id, width, height) {
     // tempFS to sort finishScreen for further use
     var tempFS = new Array();
-    var dom = '<div id="' + id + '"></div>';
+    var dom = '<div id="' + id + '" class="crop-outside"></div>';
     $("body").prepend(dom);
     var tempDiv = $("#" + id);
     tempDiv.css({
@@ -840,7 +840,10 @@ function rescaleDOM() {
     var ratio = rescalingFactor();
     var newWidth = Math.ceil(HAY_WIDTH * ratio);
 
-    // TODO rescale all elements of the DOM:
+    // rescale the div itself
+    dom.width(fsWidth * ratio);
+    dom.height(fsWidth * ratio);
+    // rescale all elements of the DOM inside the div:
     dom.children().each(function (index, element) {
         // get the corresponding element in finishScreen
         var fsElement = finishScreen[element.id];
