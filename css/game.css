@@ -23,30 +23,12 @@
     .plancher {
         background-image: url('../images/plancher/plancher600.jpg');
     }
-
-    .texte {
-        font-size: 24px;
-    }
-
-    .texte pre {
-        margin-top: 3px;
-        margin-bottom: 3px;
-    }
 } 
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
     .plancher {
         background-image: url('../images/plancher/plancher768.jpg');
-    }
-
-    .texte {
-        font-size: 34px;
-    }
-
-    .texte pre {
-        margin-top: 3px;
-        margin-bottom: 3px;
     }
 } 
 
@@ -55,30 +37,12 @@
     .plancher {
         background-image: url('../images/plancher/plancher992.jpg');
     }
-
-    .texte {
-        font-size: 38px;
-    }
-
-    .texte pre {
-        margin-top: 3px;
-        margin-bottom: 3px;
-    }
 } 
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 992px) {
     .plancher {
         background-image: url('../images/plancher/plancher1200.jpg');
-    }
-
-    .texte {
-        font-size: 40px;
-    }
-
-    .texte pre {
-        margin-top: 3px;
-        margin-bottom: 3px;
     }
 } 
 
@@ -87,30 +51,12 @@
     .plancher {
         background-image: url('../images/plancher/plancher1600.jpg');
     }
-
-    .texte {
-        font-size: 42px;
-    }
-
-    .texte pre {
-        margin-top: 3px;
-        margin-bottom: 3px;
-    }
 }
 
 /* HD+ (large laptops and desktops, 1600px and up) */
 @media only screen and (min-width: 1600px) {
     .plancher {
         background-image: url('../images/plancher/plancher3840.jpg');
-    }
-
-    .texte {
-        font-size: 80px;
-    }
-
-    .texte pre {
-        margin-top: 3px;
-        margin-bottom: 3px;
     }
 }
 
@@ -134,6 +80,13 @@ html, body, #mainContainer {
 
 .texte {
     font-family: 'Inconsolata', monospace;
+    font-size: 5vmax;
+}
+
+.texte pre {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size: 4vw;
 }
 
 /* IV. Title */
