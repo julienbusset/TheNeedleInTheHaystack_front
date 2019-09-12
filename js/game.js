@@ -585,7 +585,7 @@ function regAndDisplayScores() {
 
         askPseudo.hide();
         hideTimer();
-        displayScores(jsonScores);
+        displayScores(jsonScores, id);
         stopWaiting();
     }
 
@@ -648,7 +648,7 @@ async function registerScore(pseudo) {
     }
 }
 
-function displayScores(jsonScores) {
+function displayScores(jsonScores, id) {
     // handle vars
     var sScreen = $(".scorescreen");
     var sLines = sScreen.find(".scorelines");
@@ -670,8 +670,9 @@ function displayScores(jsonScores) {
             + timeDisplay(scores[i].time);
     }
 
-    // fill
-    sLines.html(''); // before
+    // show before
+    sLines.html('');
+    // then fill
     for (var i = 0; i < SCORES_RANGE; i++) {
         var toAppend = '<pre';
         if (i == myLine) {
@@ -680,8 +681,10 @@ function displayScores(jsonScores) {
         toAppend += '>' + lines[i] + '</pre>';
         sLines.append(toAppend);
     }
-    sLines.append('<pre>Support this game at Patreon</pre>'); // after
-    sLines.append('<p>refresh page to start a new game</p>'); // after
+    // then show after
+    sLines.append('<pre>Support this game at Patreon</pre>');
+    sLines.append('<p>refresh page to start a new game</p>');
+    sLines.append('<a href="' + SITE_URL + id + '">Check and save your finish screen!</a>');
 
     // prepare display at center
     centerDiv(sScreen);
