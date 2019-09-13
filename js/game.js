@@ -95,11 +95,6 @@ var needleImg;
 $(document).ready(function () {
     // general things
 
-    // hide things which will be used later
-    // do it here, in order to let "display: something" in CSS
-    $(".modal").hide();
-    $(".modal-content").hide();
-
     // put the loading screen on top of the rest
     loading();
 
