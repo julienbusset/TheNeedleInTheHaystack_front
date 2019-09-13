@@ -81,11 +81,17 @@ html, body, #mainContainer {
 .texte {
     font-family: 'Inconsolata', monospace;
     font-size: 5vmax;
+    color: gray;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 .texte pre {
     margin-top: 3px;
     margin-bottom: 3px;
+    font-size: 4vw;
+}
+
+.texte a {
     font-size: 4vw;
 }
 
@@ -174,9 +180,9 @@ html, body, #mainContainer {
     vertical-align: middle; /* Fallback vertical align for cross-browser compatibility */
     margin: auto;
     background-color: rgb(240,240,240); /* Fallback color */
-    background-color: rgba(240,240,240,0.4); /* Black w/ opacity */
+    background-color: rgba(240,240,240,0.4); /* White w/ opacity */
     padding: 1vmin;
-    border: 1px solid #888;
+    border: 1px solid lightgray;
     border-radius: 1vmin;
     width: 80%; /* Could be more or less, depending on screen size */
 }
@@ -189,31 +195,31 @@ html, body, #mainContainer {
 
 /* generated with https://www.bestcssbuttongenerator.com/ */
 .askPseudo button {
-	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffec64), color-stop(1, #ffab23));
-	background:-moz-linear-gradient(top, #ffec64 5%, #ffab23 100%);
-	background:-webkit-linear-gradient(top, #ffec64 5%, #ffab23 100%);
-	background:-o-linear-gradient(top, #ffec64 5%, #ffab23 100%);
-	background:-ms-linear-gradient(top, #ffec64 5%, #ffab23 100%);
-	background:linear-gradient(to bottom, #ffec64 5%, #ffab23 100%);
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffec64', endColorstr='#ffab23',GradientType=0);
-	background-color:#ffec64;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #FFEF52), color-stop(1, #FFB22B));
+	background:-moz-linear-gradient(top, #FFEF52 5%, #FFB22B 100%);
+	background:-webkit-linear-gradient(top, #FFEF52 5%, #FFB22B 100%);
+	background:-o-linear-gradient(top, #FFEF52 5%, #FFB22B 100%);
+	background:-ms-linear-gradient(top, #FFEF52 5%, #FFB22B 100%);
+	background:linear-gradient(to bottom, #FFEF52 5%, #FFB22B 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFEF52', endColorstr='#FFB22B',GradientType=0);
+	background-color:#FFEF52;
 	-moz-border-radius:28px;
 	-webkit-border-radius:28px;
 	border-radius:28px;
-	border:1px solid #ffaa22;
+	border:1px solid #FFB22B;
 	display:inline-block;
 	cursor:pointer;
 	color:#333333;
 	padding:16px 31px;
 	text-decoration:none;
-    text-shadow:1px 1px 0px #ffee66;
+    text-shadow:1px 1px 0px #FFEF52;
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
 }
 .askPseudo button:hover {
-    -moz-box-shadow: 3px 3px 7px 0px #fff6af;
-	-webkit-box-shadow: 3px 3px 7px 0px #fff6af;
-	box-shadow: 3px 3px 7px 0px #fff6af;
+    -moz-box-shadow: 3px 3px 7px 0px #FFEF52;
+	-webkit-box-shadow: 3px 3px 7px 0px #FFEF52;
+	box-shadow: 3px 3px 7px 0px #FFEF52;
 }
 .askPseudo button:active {
 	position:relative;
@@ -252,7 +258,7 @@ html, body, #mainContainer {
 
 /* to make my line of score better */
 .myLine {
-    color: red;
+    color: #FFB22B;
 }
 
 /* Restart button */
@@ -273,6 +279,10 @@ html, body, #mainContainer {
 
 #restartButton:hover {
     box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+#restartButton img {
+    max-width: 10vmin;
 }
 
 /* VIII. Loading screen */
