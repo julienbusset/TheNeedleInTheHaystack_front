@@ -46,6 +46,7 @@ const API_URL = "https://127.0.0.1:8000/"
 const IMG_DIR = "images/";
 const NEEDLE_IMG_FILENAME = "needle.png";
 const HAY_IMG_FILENAME = "hay.png";
+const RESTART_IMG_FILENAME = "restart.png";
 const FS_ID = "fs";
 
 // variables
@@ -656,6 +657,12 @@ function displayScores(jsonScores, id) {
     var myLine = parseInt(jsonScores[0].lineindex);
     var scores = jsonScores.slice(1);
 
+    // load images
+    restartImg = new Image();
+    // restartImg.id = "restartButton";
+    // TODO rajouter ontouchstart ?
+    restartImg.src = SITE_URL + IMG_DIR + RESTART_IMG_FILENAME;
+
     // get the number of figures in the rank, and fill with blanks the shorter ones
     var maxRankDigits = (myRank + SCORES_RANGE - 1 - myLine).toString().length;
 
@@ -682,8 +689,14 @@ function displayScores(jsonScores, id) {
         sLines.append(toAppend);
     }
     // then show after
-    sLines.append('<a href="https://www.patreon.com/beuj">Support this game at Patreon</a>');
-    sLines.append('<p>refresh page to start a new game</p>');
+    // a button to restart
+    sLines.append('<button id="restartButton"></button>')
+    $("#restartButton").append(restartImg);
+    $("#restartButton").click(function(e) {
+        console.log("click");
+    });
+    // links to Patreon page and finisch screen
+    sLines.append('<a href="https://www.patreon.com/beuj" target="_blank">Support this game at Patreon</a>');
     sLines.append('<a href="' + SITE_URL + id + '">Check and save your finish screen!</a>');
 
     // prepare display at center

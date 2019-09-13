@@ -244,6 +244,12 @@ html, body, #mainContainer {
     color: red;
 }
 
+/* Restart button */
+#restartButton {
+    background-color: transparent;
+    border: none;
+    display: inline-block;
+}
 
 /* VIII. Loading screen */
 .pleaseWait {
