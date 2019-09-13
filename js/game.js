@@ -95,6 +95,11 @@ var needleImg;
 $(document).ready(function () {
     // general things
 
+    // hide things which will be used later
+    // do it here, in order to let "display: something" in CSS
+    $(".modal").hide();
+    $(".modal-content").hide();
+
     // put the loading screen on top of the rest
     loading();
 
@@ -537,11 +542,8 @@ function manageTitle() {
     // find it
     var title = $(".title");
 
-    // put it where it's good to be
-    centerDiv(title);
-    title.css("bottom", "");
-    title.css("top", "3%");
-    title.css("padding", "0");
+    // put it on top
+    title.css("zIndex", topZIndex());
 
     // make it draggable
     title.addClass("draggable");
@@ -560,9 +562,7 @@ function regAndDisplayScores() {
 
     // show modal div
     var modalScreen = $(".modal");
-    modalScreen.css({
-        "zIndex": topZIndex()
-    });
+    modalScreen.css("zIndex", topZIndex());
     modalScreen.show();
 
     // display the screen to ask for pseudo (and congrats ^^')
@@ -623,10 +623,6 @@ function askForPseudoScreen() {
     // a bit of css
     askPseudo.find(".submitButton").addClass("texte");
     askPseudo.find(".textInput").addClass("texte");
-
-
-    // prepare it for display
-    centerDiv(askPseudo);
 
     // display it
     askPseudo.show();
@@ -696,11 +692,8 @@ function displayScores(jsonScores, id) {
         location.reload();
     });
     // links to Patreon page and finisch screen
-    sLines.append('<a href="https://www.patreon.com/beuj" target="_blank">Support this game at Patreon</a>');
-    sLines.append('<a href="' + SITE_URL + id + '">Check and save your finish screen!</a>');
-
-    // prepare display at center
-    centerDiv(sScreen);
+    sLines.append('<a class="text" href="https://www.patreon.com/beuj" target="_blank">Support this game at Patreon</a>');
+    sLines.append('<a class="text" href="' + SITE_URL + id + '">Check and save your finish screen!</a>');
 
     // display
     sScreen.show();
@@ -908,28 +901,11 @@ function getPageXY(event) {
     return page;
 }
 
-// to center a div and put it on top before displaying it but after its filled
-function centerDiv(div) {
-    div.css({
-        "position": "absolute",
-        "zIndex": topZIndex()
-    });
-
-    // position at centre, remove half width / height of screen
-    var leftOffset = Math.round((mainWidth - div.outerWidth()) / 2);
-    var bottomOffset = Math.round((mainHeight - div.outerHeight()) / 2);
-
-    div.css({
-        "bottom": bottomOffset,
-        "left": leftOffset
-    });
-}
-
 // to make you wait
 function pleaseWait() {
     var waitScreen = $(".pleaseWait");
     var rAngle = 0;
-    centerDiv(waitScreen);
+    waitScreen.css("zIndex", topZIndex());
 
     spinnerTimeout = setInterval(function () {
         waitScreen.find("img").css({
