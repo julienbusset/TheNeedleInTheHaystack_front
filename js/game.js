@@ -693,7 +693,7 @@ function displayScores(jsonScores, id) {
     sLines.append('<button id="restartButton"></button>')
     $("#restartButton").append(restartImg);
     $("#restartButton").click(function(e) {
-        console.log("click");
+        location.reload();
     });
     // links to Patreon page and finisch screen
     sLines.append('<a href="https://www.patreon.com/beuj" target="_blank">Support this game at Patreon</a>');
