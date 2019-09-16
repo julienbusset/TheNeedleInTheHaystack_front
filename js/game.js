@@ -43,10 +43,14 @@ const HAY_DENSITY = 0.0024;
 const SITE_URL = "http://localhost:8888/TNITH/front/";
 const SITE_BASE_URI = "/TNITH/front/";
 const API_URL = "https://127.0.0.1:8000/"
+// images
 const IMG_DIR = "images/";
 const NEEDLE_IMG_FILENAME = "needle.png";
 const HAY_IMG_FILENAME = "hay.png";
 const RESTART_IMG_FILENAME = "restart.png";
+const SAVE_IMG_FILENAME = "save.png";
+const PATREON_IMG_FILENAME = "coin.png";
+// ids
 const FS_ID = "fs";
 
 // variables
@@ -649,10 +653,15 @@ function displayScores(jsonScores, id) {
     var scores = jsonScores.slice(1);
 
     // load images
-    restartImg = new Image();
+    var restartImg = new Image();
     // restartImg.id = "restartButton";
-    // TODO rajouter ontouchstart ?
     restartImg.src = SITE_URL + IMG_DIR + RESTART_IMG_FILENAME;
+
+    var saveImg = new Image();
+    saveImg.src = SITE_URL + IMG_DIR + SAVE_IMG_FILENAME;
+
+    var patreonImg = new Image();
+    patreonImg = SITE_URL + IMG_DIR + PATREON_IMG_FILENAME;
 
     // get the number of figures in the rank, and fill with blanks the shorter ones
     var maxRankDigits = (myRank + SCORES_RANGE - 1 - myLine).toString().length;
@@ -681,14 +690,30 @@ function displayScores(jsonScores, id) {
     }
     // then show after
     // a button to restart
-    sLines.append('<button id="restartButton"></button>')
-    $("#restartButton").append(restartImg);
-    $("#restartButton").click(function(e) {
+    var restartId = "restartButton";
+    sLines.append('<button class="scoreScreenButton" id="' + restartId + '"></button>');
+    $("#" + restartId).append(restartImg);
+    $("#" + restartId).append('<p class="texte">Restart</p>');
+    $("#" + restartId).click(function(e) {
         location.reload();
     });
+
     // links to Patreon page and finisch screen
-    sLines.append('<a class="text" href="https://www.patreon.com/beuj" target="_blank">Support this game at Patreon</a>');
-    sLines.append('<a class="text" href="' + SITE_URL + id + '">Check and save your finish screen!</a>');
+    var patreonId = "patreonButton";
+    sLines.append('<button class="scoreScreenButton" id="' + patreonId + '"></button>');
+    $("#" + patreonId).append(patreonImg);
+    $("#" + patreonId).append('<p class="texte">support</p>');
+    $("#" + patreonId).click(function(e) {
+        window.open("https://www.patreon.com/beuj", "_blank");
+    });
+
+    var saveId = "saveButton";
+    sLines.append('<button class="scoreScreenButton" id="' + saveId + '"></button>');
+    $("#" + saveId).append(saveImg);
+    $("#" + saveId).append('<p class="texte">save finish screen</p>');
+    $("#" + saveId).click(function(e) {
+        window.open(id, "_blank");
+    });
 
     // display
     sScreen.show();
