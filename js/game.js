@@ -49,7 +49,7 @@ const NEEDLE_IMG_FILENAME = "needle.png";
 const HAY_IMG_FILENAME = "hay.png";
 const RESTART_IMG_FILENAME = "restart.png";
 const SAVE_IMG_FILENAME = "save.png";
-const PATREON_IMG_FILENAME = "coin.png";
+const SUPPORT_IMG_FILENAME = "coin.png";
 // ids
 const FS_ID = "fs";
 
@@ -660,8 +660,8 @@ function displayScores(jsonScores, id) {
     var saveImg = new Image();
     saveImg.src = SITE_URL + IMG_DIR + SAVE_IMG_FILENAME;
 
-    var patreonImg = new Image();
-    patreonImg.src = SITE_URL + IMG_DIR + PATREON_IMG_FILENAME;
+    var supportImg = new Image();
+    supportImg.src = SITE_URL + IMG_DIR + SUPPORT_IMG_FILENAME;
 
     // get the number of figures in the rank, and fill with blanks the shorter ones
     var maxRankDigits = (myRank + SCORES_RANGE - 1 - myLine).toString().length;
@@ -701,11 +701,11 @@ function displayScores(jsonScores, id) {
     };
     addButton(sLines, restartImg, "restartButton", "restart", restart);
 
-    // a link to Patreon page
+    // a link to support page
     var goToSupport = function () {
         window.open("https://www.patreon.com/beuj", "_blank");
     };
-    addButton(sLines, patreonImg, "patreonButton", "support", goToSupport);
+    addButton(sLines, supportImg, "supportButton", "support", goToSupport);
 
     // display
     sScreen.show();
