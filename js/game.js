@@ -689,22 +689,23 @@ function displayScores(jsonScores, id) {
         sLines.append(toAppend);
     }
     // then show after
+    // add save finish screen button
+    var goToFS = function () {
+        window.open(id, "_blank");
+    };
+    addButton(sLines, saveImg, "saveButton", "save finish screen", goToFS);
+
     // a button to restart
     var restart = function () {
         location.reload();
     };
     addButton(sLines, restartImg, "restartButton", "restart", restart);
 
-    // links to Patreon page and finisch screen
+    // a link to Patreon page
     var goToSupport = function () {
         window.open("https://www.patreon.com/beuj", "_blank");
     };
     addButton(sLines, patreonImg, "patreonButton", "support", goToSupport);
-
-    var goToFS = function () {
-        window.open(id, "_blank");
-    };
-    addButton(sLines, saveImg, "saveButton", "save finish screen", goToFS);
 
     // display
     sScreen.show();
