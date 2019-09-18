@@ -318,6 +318,17 @@ html, body, #mainContainer {
     box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 }
 
+/* horizontal alignment */
+#saveButton {
+    float: left;
+    margin-left: 10%;
+}
+
+#patreonButton {
+    float: right;
+    margin-right: 10%;
+}
+
 /* VIII. Loading screen */
 .pleaseWait {
     position: absolute;
