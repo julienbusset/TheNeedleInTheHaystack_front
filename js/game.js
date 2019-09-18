@@ -661,7 +661,7 @@ function displayScores(jsonScores, id) {
     saveImg.src = SITE_URL + IMG_DIR + SAVE_IMG_FILENAME;
 
     var patreonImg = new Image();
-    patreonImg = SITE_URL + IMG_DIR + PATREON_IMG_FILENAME;
+    patreonImg.src = SITE_URL + IMG_DIR + PATREON_IMG_FILENAME;
 
     // get the number of figures in the rank, and fill with blanks the shorter ones
     var maxRankDigits = (myRank + SCORES_RANGE - 1 - myLine).toString().length;
