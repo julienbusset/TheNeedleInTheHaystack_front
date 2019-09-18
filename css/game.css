@@ -270,7 +270,7 @@ html, body, #mainContainer {
     border: none;
     padding: 0px;
     font-size: 0px;
-    display: block;
+    display: inline-block;
     transition: all 0.3s ease-out;
     -moz-transition: all 0.3s ease-out;
     -webkit-transition: all 0.3s ease-out;
