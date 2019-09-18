@@ -690,33 +690,33 @@ function displayScores(jsonScores, id) {
     }
     // then show after
     // a button to restart
-    var restartId = "restartButton";
-    sLines.append('<button class="scoreScreenButton" id="' + restartId + '"></button>');
-    $("#" + restartId).append(restartImg);
-    $("#" + restartId).append('<p class="texte">Restart</p>');
-    $("#" + restartId).click(function(e) {
+    var restart = function () {
         location.reload();
-    });
+    };
+    addButton(sLines, restartImg, "restartButton", "restart", restart);
 
     // links to Patreon page and finisch screen
-    var patreonId = "patreonButton";
-    sLines.append('<button class="scoreScreenButton" id="' + patreonId + '"></button>');
-    $("#" + patreonId).append(patreonImg);
-    $("#" + patreonId).append('<p class="texte">support</p>');
-    $("#" + patreonId).click(function(e) {
+    var goToSupport = function () {
         window.open("https://www.patreon.com/beuj", "_blank");
-    });
+    };
+    addButton(sLines, patreonImg, "patreonButton", "support", goToSupport);
 
-    var saveId = "saveButton";
-    sLines.append('<button class="scoreScreenButton" id="' + saveId + '"></button>');
-    $("#" + saveId).append(saveImg);
-    $("#" + saveId).append('<p class="texte">save finish screen</p>');
-    $("#" + saveId).click(function(e) {
+    var goToFS = function () {
         window.open(id, "_blank");
-    });
+    };
+    addButton(sLines, saveImg, "saveButton", "save finish screen", goToFS);
 
     // display
     sScreen.show();
+}
+
+function addButton(scoreDiv, image, id, text, clickFunction) {
+    scoreDiv.append('<button class="scoreScreenButton" id="' + id + '"></button>');
+    $("#" + id).append(image);
+    $("#" + id).append('<p class="texte">' + text + '</p>');
+    $("#" + id).click(function(e) {
+        clickFunction();
+    });
 }
 
 /***********
