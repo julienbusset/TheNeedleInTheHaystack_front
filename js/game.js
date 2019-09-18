@@ -43,9 +43,14 @@ const HAY_DENSITY = 0.0024;
 const SITE_URL = "http://localhost:8888/TNITH/front/";
 const SITE_BASE_URI = "/TNITH/front/";
 const API_URL = "https://127.0.0.1:8000/"
+// images
 const IMG_DIR = "images/";
 const NEEDLE_IMG_FILENAME = "needle.png";
 const HAY_IMG_FILENAME = "hay.png";
+const RESTART_IMG_FILENAME = "restart.png";
+const SAVE_IMG_FILENAME = "save.png";
+const SUPPORT_IMG_FILENAME = "coin.png";
+// ids
 const FS_ID = "fs";
 
 // variables
@@ -80,7 +85,7 @@ var beginScreen = new Array();
 var finishScreen = new Array();
 var savedFS; // the one we got from AJAX, to transform into regular finishScreen
 
-// for canvas
+// for finish screen display
 var fsWidth;
 var fsHeight;
 
@@ -536,11 +541,8 @@ function manageTitle() {
     // find it
     var title = $(".title");
 
-    // put it where it's good to be
-    centerDiv(title);
-    title.css("bottom", "");
-    title.css("top", "3%");
-    title.css("padding", "0");
+    // put it on top
+    title.css("zIndex", topZIndex());
 
     // make it draggable
     title.addClass("draggable");
@@ -559,9 +561,7 @@ function regAndDisplayScores() {
 
     // show modal div
     var modalScreen = $(".modal");
-    modalScreen.css({
-        "zIndex": topZIndex()
-    });
+    modalScreen.css("zIndex", topZIndex());
     modalScreen.show();
 
     // display the screen to ask for pseudo (and congrats ^^')
@@ -585,7 +585,7 @@ function regAndDisplayScores() {
 
         askPseudo.hide();
         hideTimer();
-        displayScores(jsonScores);
+        displayScores(jsonScores, id);
         stopWaiting();
     }
 
@@ -623,10 +623,6 @@ function askForPseudoScreen() {
     askPseudo.find(".submitButton").addClass("texte");
     askPseudo.find(".textInput").addClass("texte");
 
-
-    // prepare it for display
-    centerDiv(askPseudo);
-
     // display it
     askPseudo.show();
 }
@@ -648,13 +644,24 @@ async function registerScore(pseudo) {
     }
 }
 
-function displayScores(jsonScores) {
+function displayScores(jsonScores, id) {
     // handle vars
     var sScreen = $(".scorescreen");
     var sLines = sScreen.find(".scorelines");
     var myRank = parseInt(jsonScores[0].rank);
     var myLine = parseInt(jsonScores[0].lineindex);
     var scores = jsonScores.slice(1);
+
+    // load images
+    var restartImg = new Image();
+    // restartImg.id = "restartButton";
+    restartImg.src = SITE_URL + IMG_DIR + RESTART_IMG_FILENAME;
+
+    var saveImg = new Image();
+    saveImg.src = SITE_URL + IMG_DIR + SAVE_IMG_FILENAME;
+
+    var supportImg = new Image();
+    supportImg.src = SITE_URL + IMG_DIR + SUPPORT_IMG_FILENAME;
 
     // get the number of figures in the rank, and fill with blanks the shorter ones
     var maxRankDigits = (myRank + SCORES_RANGE - 1 - myLine).toString().length;
@@ -670,8 +677,9 @@ function displayScores(jsonScores) {
             + timeDisplay(scores[i].time);
     }
 
-    // fill
-    sLines.html(''); // before
+    // show before
+    sLines.html('');
+    // then fill
     for (var i = 0; i < SCORES_RANGE; i++) {
         var toAppend = '<pre';
         if (i == myLine) {
@@ -680,14 +688,36 @@ function displayScores(jsonScores) {
         toAppend += '>' + lines[i] + '</pre>';
         sLines.append(toAppend);
     }
-    sLines.append('<pre>Support this game at Patreon</pre>'); // after
-    sLines.append('<p>refresh page to start a new game</p>'); // after
+    // then show after
+    // add save finish screen button
+    var goToFS = function () {
+        window.open(id, "_blank");
+    };
+    addButton(sLines, saveImg, "saveButton", "save finish screen", goToFS);
 
-    // prepare display at center
-    centerDiv(sScreen);
+    // a button to restart
+    var restart = function () {
+        location.reload();
+    };
+    addButton(sLines, restartImg, "restartButton", "restart", restart);
+
+    // a link to support page
+    var goToSupport = function () {
+        window.open("https://www.patreon.com/beuj", "_blank");
+    };
+    addButton(sLines, supportImg, "supportButton", "support", goToSupport);
 
     // display
     sScreen.show();
+}
+
+function addButton(scoreDiv, image, id, text, clickFunction) {
+    scoreDiv.append('<button class="scoreScreenButton" id="' + id + '"></button>');
+    $("#" + id).append(image);
+    $("#" + id).append('<p class="texte">' + text + '</p>');
+    $("#" + id).click(function(e) {
+        clickFunction();
+    });
 }
 
 /***********
@@ -803,7 +833,7 @@ function rescaleFS() {
 function makeDOM(id, width, height) {
     // tempFS to sort finishScreen for further use
     var tempFS = new Array();
-    var dom = '<div id="' + id + '"></div>';
+    var dom = '<div id="' + id + '" class="crop-outside"></div>';
     $("body").prepend(dom);
     var tempDiv = $("#" + id);
     tempDiv.css({
@@ -840,7 +870,10 @@ function rescaleDOM() {
     var ratio = rescalingFactor();
     var newWidth = Math.ceil(HAY_WIDTH * ratio);
 
-    // TODO rescale all elements of the DOM:
+    // rescale the div itself
+    dom.width(fsWidth * ratio);
+    dom.height(fsWidth * ratio);
+    // rescale all elements of the DOM inside the div:
     dom.children().each(function (index, element) {
         // get the corresponding element in finishScreen
         var fsElement = finishScreen[element.id];
@@ -889,28 +922,11 @@ function getPageXY(event) {
     return page;
 }
 
-// to center a div and put it on top before displaying it but after its filled
-function centerDiv(div) {
-    div.css({
-        "position": "absolute",
-        "zIndex": topZIndex()
-    });
-
-    // position at centre, remove half width / height of screen
-    var leftOffset = Math.round((mainWidth - div.outerWidth()) / 2);
-    var bottomOffset = Math.round((mainHeight - div.outerHeight()) / 2);
-
-    div.css({
-        "bottom": bottomOffset,
-        "left": leftOffset
-    });
-}
-
 // to make you wait
 function pleaseWait() {
     var waitScreen = $(".pleaseWait");
     var rAngle = 0;
-    centerDiv(waitScreen);
+    waitScreen.css("zIndex", topZIndex());
 
     spinnerTimeout = setInterval(function () {
         waitScreen.find("img").css({

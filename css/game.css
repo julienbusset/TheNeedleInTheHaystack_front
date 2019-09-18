@@ -11,6 +11,7 @@
 * * b. congrats screen style
 * * c. scores style
 * VIII. Loading screen
+* IX.   Finish screen
 ***************/
 
 /* I. Google font */
@@ -22,30 +23,12 @@
     .plancher {
         background-image: url('../images/plancher/plancher600.jpg');
     }
-
-    .texte {
-        font-size: 24px;
-    }
-
-    .texte pre {
-        margin-top: 3px;
-        margin-bottom: 3px;
-    }
 } 
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
     .plancher {
         background-image: url('../images/plancher/plancher768.jpg');
-    }
-
-    .texte {
-        font-size: 34px;
-    }
-
-    .texte pre {
-        margin-top: 3px;
-        margin-bottom: 3px;
     }
 } 
 
@@ -54,30 +37,12 @@
     .plancher {
         background-image: url('../images/plancher/plancher992.jpg');
     }
-
-    .texte {
-        font-size: 38px;
-    }
-
-    .texte pre {
-        margin-top: 3px;
-        margin-bottom: 3px;
-    }
 } 
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 992px) {
     .plancher {
         background-image: url('../images/plancher/plancher1200.jpg');
-    }
-
-    .texte {
-        font-size: 40px;
-    }
-
-    .texte pre {
-        margin-top: 3px;
-        margin-bottom: 3px;
     }
 } 
 
@@ -86,30 +51,12 @@
     .plancher {
         background-image: url('../images/plancher/plancher1600.jpg');
     }
-
-    .texte {
-        font-size: 42px;
-    }
-
-    .texte pre {
-        margin-top: 3px;
-        margin-bottom: 3px;
-    }
 }
 
 /* HD+ (large laptops and desktops, 1600px and up) */
 @media only screen and (min-width: 1600px) {
     .plancher {
         background-image: url('../images/plancher/plancher3840.jpg');
-    }
-
-    .texte {
-        font-size: 80px;
-    }
-
-    .texte pre {
-        margin-top: 3px;
-        margin-bottom: 3px;
     }
 }
 
@@ -133,15 +80,32 @@ html, body, #mainContainer {
 
 .texte {
     font-family: 'Inconsolata', monospace;
+    font-size: 5vmax;
+    color: gray;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.texte pre {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size: 4vw;
+}
+
+.texte a {
+    font-size: 4vw;
 }
 
 /* IV. Title */
 .title {
+    position: absolute;
     display: block;
     height: 20%;
     width: auto;
+    left: 0;
+    right: 0;
+    top: 3%;
     margin: auto;
-    padding-top: 3%;
+    padding: 0;
 }
 
 /* V. Timer */
@@ -198,6 +162,9 @@ html, body, #mainContainer {
 /* a. The Modal (background) */
 .modal {
     position: fixed; /* Stay in place */
+    display: table; /* Fallback vertical align for cross-browser compatibility */
+    display: flex;
+    align-items: center;
     left: 0;
     top: 0;
     width: 100%; /* Full width */
@@ -209,11 +176,14 @@ html, body, #mainContainer {
   
 /* Modal Content/Box */
 .modal-content {
+    display: table-cell; /* Fallback vertical align for cross-browser compatibility */
+    vertical-align: middle; /* Fallback vertical align for cross-browser compatibility */
+    margin: auto;
     background-color: rgb(240,240,240); /* Fallback color */
-    background-color: rgba(240,240,240,0.4); /* Black w/ opacity */
-    padding: 1em;
-    border: 1px solid #888;
-    border-radius: 1em;
+    background-color: rgba(240,240,240,0.4); /* White w/ opacity */
+    padding: 1vmin;
+    border: 1px solid lightgray;
+    border-radius: 1vmin;
     width: 80%; /* Could be more or less, depending on screen size */
 }
 
@@ -225,31 +195,31 @@ html, body, #mainContainer {
 
 /* generated with https://www.bestcssbuttongenerator.com/ */
 .askPseudo button {
-	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffec64), color-stop(1, #ffab23));
-	background:-moz-linear-gradient(top, #ffec64 5%, #ffab23 100%);
-	background:-webkit-linear-gradient(top, #ffec64 5%, #ffab23 100%);
-	background:-o-linear-gradient(top, #ffec64 5%, #ffab23 100%);
-	background:-ms-linear-gradient(top, #ffec64 5%, #ffab23 100%);
-	background:linear-gradient(to bottom, #ffec64 5%, #ffab23 100%);
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffec64', endColorstr='#ffab23',GradientType=0);
-	background-color:#ffec64;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #FFEF52), color-stop(1, #FFB22B));
+	background:-moz-linear-gradient(top, #FFEF52 5%, #FFB22B 100%);
+	background:-webkit-linear-gradient(top, #FFEF52 5%, #FFB22B 100%);
+	background:-o-linear-gradient(top, #FFEF52 5%, #FFB22B 100%);
+	background:-ms-linear-gradient(top, #FFEF52 5%, #FFB22B 100%);
+	background:linear-gradient(to bottom, #FFEF52 5%, #FFB22B 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFEF52', endColorstr='#FFB22B',GradientType=0);
+	background-color:#FFEF52;
 	-moz-border-radius:28px;
 	-webkit-border-radius:28px;
 	border-radius:28px;
-	border:1px solid #ffaa22;
+	border:1px solid #FFB22B;
 	display:inline-block;
 	cursor:pointer;
 	color:#333333;
 	padding:16px 31px;
 	text-decoration:none;
-    text-shadow:1px 1px 0px #ffee66;
+    text-shadow:1px 1px 0px #FFEF52;
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
 }
 .askPseudo button:hover {
-    -moz-box-shadow: 3px 3px 7px 0px #fff6af;
-	-webkit-box-shadow: 3px 3px 7px 0px #fff6af;
-	box-shadow: 3px 3px 7px 0px #fff6af;
+    -moz-box-shadow: 3px 3px 7px 0px #FFEF52;
+	-webkit-box-shadow: 3px 3px 7px 0px #FFEF52;
+	box-shadow: 3px 3px 7px 0px #FFEF52;
 }
 .askPseudo button:active {
 	position:relative;
@@ -281,20 +251,97 @@ html, body, #mainContainer {
     margin: auto;
 }
 
-.scorescreen p {
-    font-size: 0.5em;
+.scorescreen p,
+.scorescreen a {
+    display: block;
 }
 
 /* to make my line of score better */
 .myLine {
-    color: red;
+    color: #FFB22B;
 }
 
+/* Score screen Buttons (restart, save and patron */
+.scoreScreenButton {
+    position: relative; /* to position the text inside, it has to be positioned itself */
+    margin-left: auto;
+    margin-right: auto;
+    background-color: transparent;
+    border: none;
+    padding: 0px;
+    font-size: 0px;
+    display: inline-block;
+    transition: all 0.3s ease-out;
+    -moz-transition: all 0.3s ease-out;
+    -webkit-transition: all 0.3s ease-out;
+    -o-transition: all 0.3s ease-out;
+    cursor: pointer;
+}
+
+.scoreScreenButton img {
+    max-width: 10vmin;
+}
+
+.scoreScreenButton p {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    font-size: 2vmin;
+    color: lightgray;
+    pointer-events: none;
+    opacity: 0;
+    filter: alpha(opacity=0); /* For IE8 and earlier */
+    transition: all 0.3s ease-out;
+    -moz-transition: all 0.3s ease-out;
+    -webkit-transition: all 0.3s ease-out;
+    -o-transition: all 0.3s ease-out;
+}
+
+.scoreScreenButton:hover > p {
+    opacity: 1;
+    filter: alpha(opacity=100); /* For IE8 and earlier */
+}
+
+/* Restart button */
+#restartButton {
+    border-radius: 50%;
+}
+
+#restartButton:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+/* horizontal alignment */
+#saveButton {
+    float: left;
+    margin-left: 10%;
+}
+
+#supportButton {
+    float: right;
+    margin-right: 10%;
+}
 
 /* VIII. Loading screen */
 .pleaseWait {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     margin: auto;
     text-align: center;
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 .pleaseWait img {
@@ -307,5 +354,12 @@ html, body, #mainContainer {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    color: whitesmoke;
+    font-weight: bold;
+    color: #FFB22B;
+    text-shadow: 1px 1px 0px #FFEF52, 1px -1px 0px #FFEF52, -1px 1px 0px #FFEF52, -1px -1px 0px #FFEF52;
+}
+
+/* IX. Finisch screen */
+.crop-outside {
+    overflow: hidden;
 }
