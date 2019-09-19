@@ -128,6 +128,9 @@ saveRecordButtonText['fr'] = "Enregistrer le score";
 var loadingText = new Array();
 loadingText['en'] = "Incoming...";
 loadingText['fr'] = "Ça vient..."
+var problemText = new Array();
+problemText['en'] = "A problem occured, sorry :'(";
+problemText['fr'] = "Un problème est survenu, désolé :'(";
 
 /**********
  * I. Main function
@@ -238,7 +241,13 @@ async function showIdFinishScreen(id) {
     hideTitle(); // ?
 
     // get finish screen of given id
-    var fs = await getFSFromId(id);
+    try {
+        var fs = await getFSFromId(id);
+    } catch (error) {
+        // dev
+        // console.error(error);
+        window.alert(translate(problemText));
+    }
 
     // and save it to reuse it when resizing the window
     savedFS = fs[0].finishscreen;
@@ -611,8 +620,14 @@ function regAndDisplayScores() {
         pleaseWait();
         var pseudo = inputText.val();
 
-        var id = await registerScore(pseudo);
-        var jsonScores = await getScoresAroundId(id);
+        try {
+            var id = await registerScore(pseudo);
+            var jsonScores = await getScoresAroundId(id);
+        } catch (error) {
+            // dev
+            // console.error(error);
+            window.alert(translate(problemText));
+        }
 
         askPseudo.hide();
         hideTimer();
@@ -671,7 +686,9 @@ async function registerScore(pseudo) {
         result = await regScore(score);
         return result;
     } catch (error) {
-        console.error(error);
+        // dev
+        // console.error(error);
+        window.alert(translate(problemText));
     }
 }
 
