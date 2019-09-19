@@ -18,8 +18,6 @@
  *  III.  Functions for hanlding the needle and the hays
  *      1. Creation
  *      2. Location
- *      3. Utils
- *      4. Reconstitution of a finish screen
  *  IV.   Timer handler and utils
  *  V.    Title
  *  VI.   Scores screen
@@ -58,7 +56,8 @@ const FS_ID = "fs";
 
 // 2. Variables
 // flag to know if we play or show the finish screen
-var isPlaying = false;
+// (also used to know when the script has been executed)
+var isPlaying;
 
 var hayIdDispo = 0;
 var hayNumber = 1500; // 1500 is default, but it is recalculated from density
@@ -167,7 +166,6 @@ $(document).ready(function () {
     // if no id in the URI
     if (!Number.isInteger(extractedId)) {
         // play a new game
-        isPlaying = true;
         letsplay();
     } else {
         // else, show the associated finish screen
@@ -178,6 +176,22 @@ $(document).ready(function () {
 
 $(window).on("load", function () {
     // when everything is loaded, you can put the needle and start playing!
+    afterLoaded();
+});
+
+async function afterLoaded() {
+	var loop = 0;
+    // to fix pb when images are loaded faster than the script
+    while (isPlaying == undefined) {
+		// wait 1 second
+		var waitOneSec = await resolveAfterOneSecond();
+		// and try again
+		// after 10 seconds, say there's a problem
+		if (loop > 5) {
+			window.alert(translate(problemText));
+		}
+    }
+
     if (isPlaying) {
         stopWaiting();
         createNeedle();
@@ -198,7 +212,7 @@ $(window).on("load", function () {
         start = Date.now();
         timerRoutine();
     }
-});
+}
 
 // get window's size and set mainContainer size
 function getWindowsSize() {
@@ -234,6 +248,7 @@ function letsplay() {
     handleDraggables();
 
     // Wait that the window finishes to load before starting the game...
+    isPlaying = true;
 }
 
 // show the finish screen of given id
@@ -477,17 +492,6 @@ function moveTo(id, topOffset, leftOffset) {
         "top": topOffset + "px",
         "left": leftOffset + "px"
     });
-}
-
-/*******
- * * 3. Utils
- */
-async function hayLoaded() {
-    return Promise.resolve();
-}
-
-async function needleLoaded() {
-    return Promise.resolve();
 }
 
 
@@ -1110,3 +1114,12 @@ function translate(text) {
         return text['en'];
     }
 }
+
+// to wait one second
+function resolveAfterOneSecond() { 
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    });
+  }
