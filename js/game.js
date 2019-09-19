@@ -18,8 +18,6 @@
  *  III.  Functions for hanlding the needle and the hays
  *      1. Creation
  *      2. Location
- *      3. Utils
- *      4. Reconstitution of a finish screen
  *  IV.   Timer handler and utils
  *  V.    Title
  *  VI.   Scores screen
@@ -57,11 +55,19 @@ const SUPPORT_IMG_FILENAME = "coin.png";
 const FS_ID = "fs";
 
 // 2. Variables
+// flag to know if we play or show the finish screen
+// (also used to know when the script has been executed)
+var isPlaying;
+
 var hayIdDispo = 0;
 var hayNumber = 1500; // 1500 is default, but it is recalculated from density
 
+// may change when resize
 var mainHeight; // set after initialization
 var mainWidth; // set after initialization
+// initialized at the beginning of a game, and doesn't change
+var gameMainHeight;
+var gameMainWidth;
 
 // for dragging
 var dragged = undefined;
@@ -112,12 +118,21 @@ restartButtonText['fr'] = "encore";
 var supportButtonText = new Array();
 supportButtonText['en'] = "support";
 supportButtonText['fr'] = "soutenir";
+var supportPageUrl = new Array();
+supportPageUrl['en'] = "https://www.patreon.com/beuj";
+supportPageUrl['fr'] = "https://fr.tipeee.com/beuj";
 var needleFoundText = new Array();
 needleFoundText['en'] = "You've found the needle!";
 needleFoundText['fr'] = "Tu as trouvé l'aiguille !";
 var saveRecordButtonText = new Array();
 saveRecordButtonText['en'] = "Save record";
 saveRecordButtonText['fr'] = "Enregistrer le score";
+var loadingText = new Array();
+loadingText['en'] = "Incoming...";
+loadingText['fr'] = "Ça vient..."
+var problemText = new Array();
+problemText['en'] = "A problem occured, sorry :'(";
+problemText['fr'] = "Un problème est survenu, désolé :'(";
 
 /**********
  * I. Main function
@@ -135,12 +150,16 @@ $(document).ready(function () {
     language = window.navigator.userLanguage || window.navigator.language || navigator.browserLanguage || navigator.systemLanguage || "en";
     // use it
     $(".antiresize").find("p").html(translate(noResizeText));
+    $(".pleaseWait").find("p").html(translate(loadingText));
 
     // to avoid blue selection
     $("#mainContainer").addClass("noselect");
 
     // get window's size and set mainContainer's size
     getWindowsSize();
+    // save it to send with fs record
+    gameMainHeight = mainHeight;
+    gameMainWidth = mainWidth;
 
     // calculate hay number with density and window area
     hayNumber = calculateHayNumber();
@@ -153,9 +172,50 @@ $(document).ready(function () {
         letsplay();
     } else {
         // else, show the associated finish screen
+        isPlaying = false;
         showIdFinishScreen(extractedId);
     }
 });
+
+$(window).on("load", function () {
+    // when everything is loaded, you can put the needle and start playing!
+    afterLoaded();
+});
+
+async function afterLoaded() {
+	var loop = 0;
+    // to fix pb when images are loaded faster than the script
+    while (isPlaying == undefined) {
+		// wait 1 second
+		var waitOneSec = await resolveAfterOneSecond();
+		// and try again
+		// after 10 seconds, say there's a problem
+		if (loop > 5) {
+			window.alert(translate(problemText));
+		}
+    }
+
+    if (isPlaying) {
+        stopWaiting();
+        createNeedle();
+
+        // click the needle to win
+        $("#needle").one("click touchstart", function () {
+            timeToWin = Date.now() - start;
+            clearInterval(timerController);
+            displayFinalTime(); // to display it frame perfect!
+            regAndDisplayScores();
+            // on smartphones, the screen is reduced when you enter the name
+            // due to the virtual keyboard
+            enableResizing();
+        });
+
+        // Timer starts!
+        prepareTimer();
+        start = Date.now();
+        timerRoutine();
+    }
+}
 
 // get window's size and set mainContainer size
 function getWindowsSize() {
@@ -190,27 +250,8 @@ function letsplay() {
     // handle dragging
     handleDraggables();
 
-    // wait that everything is on screen to build the needle and so on
-    allLoaded().then(function () {
-        stopWaiting();
-        createNeedle();
-
-        // click the needle to win
-        $("#needle").one("click touchstart", function () {
-            timeToWin = Date.now() - start;
-            clearInterval(timerController);
-            displayFinalTime(); // to display it frame perfect!
-            regAndDisplayScores();
-            // on smartphones, the screen is reduced when you enter the name
-            // due to the virtual keyboard
-            enableResizing();
-        });
-
-        // Timer starts!
-        prepareTimer();
-        start = Date.now();
-        timerRoutine();
-    });
+    // Wait that the window finishes to load before starting the game...
+    isPlaying = true;
 }
 
 // show the finish screen of given id
@@ -218,48 +259,39 @@ async function showIdFinishScreen(id) {
     hideTitle(); // ?
 
     // get finish screen of given id
-    var fs = await getFSFromId(id);
+    try {
+        var fs = await getFSFromId(id);
+    } catch (error) {
+        // dev
+        // console.error(error);
+        window.alert(translate(problemText));
+    }
 
     // and save it to reuse it when resizing the window
     savedFS = fs[0].finishscreen;
 
-    // when images are loaded, recreate the finish screen
-    allLoaded().then(function () {
-        recreateFS();
+    recreateFS();
 
-        // make the canvas rescaling dynamically
-        $(window).resize(function () {
-            getWindowsSize();
-            rescaleFS();
-        });
-
-        stopWaiting();
+    // make the canvas rescaling dynamically
+    $(window).resize(function () {
+        getWindowsSize();
+        rescaleFS();
     });
+
+    stopWaiting();
 }
 
-async function preloadImg() {
+function preloadImg() {
     titleImg = new Image();
 
     spinnerImg = new Image();
 
     needleImg = new Image();
-    needleImg.onload = needleLoaded();
     needleImg.src = SITE_URL + IMG_DIR + NEEDLE_IMG_FILENAME;
 
     hayImg = new Image();
     hayImg.className = "hay draggable";
-    hayImg.onload = hayLoaded();
     hayImg.src = SITE_URL + IMG_DIR + HAY_IMG_FILENAME;
-
-    return allLoaded();
-}
-
-async function allLoaded() {
-    return Promise.all([
-        needleLoaded(),
-        hayLoaded(),
-        windowLoaded()
-    ]);
 }
 
 function loading() {
@@ -267,11 +299,6 @@ function loading() {
     $(".pleaseWait").css("zIndex", hayNumber + 1001);
 }
 
-function windowLoaded() {
-    $(window).on("load", function () {
-        return Promise.resolve();
-    });
-}
 
 /******
  * II. to handle draggable objects (hays, title)
@@ -470,17 +497,6 @@ function moveTo(id, topOffset, leftOffset) {
     });
 }
 
-/*******
- * * 3. Utils
- */
-async function hayLoaded() {
-    return Promise.resolve();
-}
-
-async function needleLoaded() {
-    return Promise.resolve();
-}
-
 
 /**********
  * IV. Timer handler and utils
@@ -610,9 +626,15 @@ function regAndDisplayScores() {
         submitButton.attr("disabled", "disabled");
         pleaseWait();
         var pseudo = inputText.val();
-        
-        var id = await registerScore(pseudo);
-        var jsonScores = await getScoresAroundId(id);
+
+        try {
+            var id = await registerScore(pseudo);
+            var jsonScores = await getScoresAroundId(id);
+        } catch (error) {
+            // dev
+            // console.error(error);
+            window.alert(translate(problemText));
+        }
 
         askPseudo.hide();
         hideTimer();
@@ -671,7 +693,9 @@ async function registerScore(pseudo) {
         result = await regScore(score);
         return result;
     } catch (error) {
-        console.error(error);
+        // dev
+        // console.error(error);
+        window.alert(translate(problemText));
     }
 }
 
@@ -734,7 +758,7 @@ function displayScores(jsonScores, id) {
 
     // a link to support page
     var goToSupport = function () {
-        window.open("https://www.patreon.com/beuj", "_blank");
+        window.open(translate(supportPageUrl), "_blank");
     };
     addButton(sLines, supportImg, "supportButton", translate(supportButtonText), goToSupport);
 
@@ -746,7 +770,7 @@ function addButton(scoreDiv, image, id, text, clickFunction) {
     scoreDiv.append('<button class="scoreScreenButton" id="' + id + '"></button>');
     $("#" + id).append(image);
     $("#" + id).append('<p class="texte">' + text + '</p>');
-    $("#" + id).click(function(e) {
+    $("#" + id).click(function (e) {
         clickFunction();
     });
 }
@@ -903,7 +927,7 @@ function rescaleDOM() {
 
     // rescale the div itself
     dom.width(fsWidth * ratio);
-    dom.height(fsWidth * ratio);
+    dom.height(fsHeight * ratio);
     // rescale all elements of the DOM inside the div:
     dom.children().each(function (index, element) {
         // get the corresponding element in finishScreen
@@ -1041,7 +1065,7 @@ function finishScreenToJSON(fs) {
 }
 
 function mainSizeToJSON() {
-    var mainSizeString = '{"id":"main","mainWidth":"' + mainWidth + '","mainHeight":"' + mainHeight + '"}';
+    var mainSizeString = '{"id":"main","mainWidth":"' + gameMainWidth + '","mainHeight":"' + gameMainHeight + '"}';
     return JSON.parse(mainSizeString);
 }
 
@@ -1051,12 +1075,9 @@ function hayOrNeedleToJSON(hayOrNeedle) {
 
 // to disable window resizing while playing
 function disableResizing() {
-    var remMainHeight = mainHeight;
-    var remMainWidth = mainWidth;
-
     $(window).resize(function () {
         getWindowsSize();
-        if (mainHeight == remMainHeight && mainWidth == remMainWidth) {
+        if (mainHeight == gameMainHeight && mainWidth == gameMainWidth) {
             $(".antiresize").hide();
             $("#mainContainer").show();
         } else {
@@ -1096,3 +1117,12 @@ function translate(text) {
         return text['en'];
     }
 }
+
+// to wait one second
+function resolveAfterOneSecond() { 
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    });
+  }
