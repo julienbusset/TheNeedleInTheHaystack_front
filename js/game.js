@@ -60,8 +60,12 @@ const FS_ID = "fs";
 var hayIdDispo = 0;
 var hayNumber = 1500; // 1500 is default, but it is recalculated from density
 
+// may change when resize
 var mainHeight; // set after initialization
 var mainWidth; // set after initialization
+// initialized at the beginning of a game, and doesn't change
+var gameMainHeight;
+var gameMainWidth;
 
 // for dragging
 var dragged = undefined;
@@ -141,6 +145,9 @@ $(document).ready(function () {
 
     // get window's size and set mainContainer's size
     getWindowsSize();
+    // save it to send with fs record
+    gameMainHeight = mainHeight;
+    gameMainWidth = mainWidth;
 
     // calculate hay number with density and window area
     hayNumber = calculateHayNumber();
@@ -903,7 +910,7 @@ function rescaleDOM() {
 
     // rescale the div itself
     dom.width(fsWidth * ratio);
-    dom.height(fsWidth * ratio);
+    dom.height(fsHeight * ratio);
     // rescale all elements of the DOM inside the div:
     dom.children().each(function (index, element) {
         // get the corresponding element in finishScreen
@@ -1041,7 +1048,7 @@ function finishScreenToJSON(fs) {
 }
 
 function mainSizeToJSON() {
-    var mainSizeString = '{"id":"main","mainWidth":"' + mainWidth + '","mainHeight":"' + mainHeight + '"}';
+    var mainSizeString = '{"id":"main","mainWidth":"' + gameMainWidth + '","mainHeight":"' + gameMainHeight + '"}';
     return JSON.parse(mainSizeString);
 }
 
@@ -1051,12 +1058,9 @@ function hayOrNeedleToJSON(hayOrNeedle) {
 
 // to disable window resizing while playing
 function disableResizing() {
-    var remMainHeight = mainHeight;
-    var remMainWidth = mainWidth;
-
     $(window).resize(function () {
         getWindowsSize();
-        if (mainHeight == remMainHeight && mainWidth == remMainWidth) {
+        if (mainHeight == gameMainHeight && mainWidth == gameMainWidth) {
             $(".antiresize").hide();
             $("#mainContainer").show();
         } else {
