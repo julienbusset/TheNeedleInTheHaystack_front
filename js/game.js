@@ -9,7 +9,10 @@
  * own front app with this API, please contact me.
  * 
  * Table of contents:
- *  0.    Constants, variables
+ *  0.    Data
+ *      1. Constants
+ *      2. Variables
+ *      3. Translations
  *  I.    Main Function
  *  II.   To handle draggable objects (hays, title)
  *  III.  Functions for hanlding the needle and the hays
@@ -27,7 +30,7 @@
  *  IX.   Other utils
  * 
  */
-// constants
+// 1. Constants
 const HAY_HEIGHT = 10;
 const HAY_WIDTH = 160;
 const DELTA_TIMER = 34; // in ms (17 is for 60fps)
@@ -53,7 +56,7 @@ const SUPPORT_IMG_FILENAME = "coin.png";
 // ids
 const FS_ID = "fs";
 
-// variables
+// 2. Variables
 var hayIdDispo = 0;
 var hayNumber = 1500; // 1500 is default, but it is recalculated from density
 
@@ -93,6 +96,29 @@ var fsHeight;
 var hayImg;
 var needleImg;
 
+// for internationalization
+var language;
+
+// 3. Translations
+var noResizeText = new Array();
+noResizeText['en'] = "Resize is not possible while playing";
+noResizeText['fr'] = "Impossible de redimensionner en cours de partie";
+var saveButtonText = new Array();
+saveButtonText['en'] = "save finish screen";
+saveButtonText['fr'] = "enregistrer écran final";
+var restartButtonText = new Array();
+restartButtonText['en'] = "restart";
+restartButtonText['fr'] = "encore";
+var supportButtonText = new Array();
+supportButtonText['en'] = "support";
+supportButtonText['fr'] = "soutenir";
+var needleFoundText = new Array();
+needleFoundText['en'] = "You've found the needle!";
+needleFoundText['fr'] = "Tu as trouvé l'aiguille !";
+var saveRecordButtonText = new Array();
+saveRecordButtonText['en'] = "Save record";
+saveRecordButtonText['fr'] = "Enregistrer le score";
+
 /**********
  * I. Main function
  */
@@ -104,6 +130,11 @@ $(document).ready(function () {
 
     // preload images (async)
     preloadImg();
+
+    // initialize internationalization
+    language = window.navigator.userLanguage || window.navigator.language || navigator.browserLanguage || navigator.systemLanguage || "en";
+    // use it
+    $(".antiresize").find("p").html(translate(noResizeText));
 
     // to avoid blue selection
     $("#mainContainer").addClass("noselect");
@@ -606,7 +637,7 @@ function askForPseudoScreen() {
     var askPseudo = $(".askPseudo");
 
     // fill it
-    askPseudo.html('<p>You\'ve found the needle!</p>');
+    askPseudo.html('<p>' + translate(needleFoundText) + '</p>');
     askPseudo.append('<p>' + timeDisplay(timeToWin) + '</p>');
     var inputTextPrep = '<input class="textInput" type="text" name="pseudo" autofocus maxlength="' + PSEUDO_SIZE + '" size="' + PSEUDO_SIZE + 'em"';
     // for the placeholder
@@ -618,7 +649,7 @@ function askForPseudoScreen() {
     inputTextPrep += '>';
     askPseudo.append(inputTextPrep);
     askPseudo.append('<br>');
-    askPseudo.append('<button class="submitButton">Save record</button>');
+    askPseudo.append('<button class="submitButton">' + translate(saveRecordButtonText) + '</button>');
     // a bit of css
     askPseudo.find(".submitButton").addClass("texte");
     askPseudo.find(".textInput").addClass("texte");
@@ -693,19 +724,19 @@ function displayScores(jsonScores, id) {
     var goToFS = function () {
         window.open(id, "_blank");
     };
-    addButton(sLines, saveImg, "saveButton", "save finish screen", goToFS);
+    addButton(sLines, saveImg, "saveButton", translate(saveButtonText), goToFS);
 
     // a button to restart
     var restart = function () {
         location.reload();
     };
-    addButton(sLines, restartImg, "restartButton", "restart", restart);
+    addButton(sLines, restartImg, "restartButton", translate(restartButtonText), restart);
 
     // a link to support page
     var goToSupport = function () {
         window.open("https://www.patreon.com/beuj", "_blank");
     };
-    addButton(sLines, supportImg, "supportButton", "support", goToSupport);
+    addButton(sLines, supportImg, "supportButton", translate(supportButtonText), goToSupport);
 
     // display
     sScreen.show();
@@ -1055,4 +1086,13 @@ function rescalingFactor() {
     var heightRatio = mainHeight / fsHeight;
     var widthRatio = mainWidth / fsWidth;
     return Math.min(heightRatio, widthRatio);
+}
+
+// for internationaziation
+function translate(text) {
+    if (language.indexOf("fr") >= 0) {
+        return text['fr'];
+    } else {
+        return text['en'];
+    }
 }
