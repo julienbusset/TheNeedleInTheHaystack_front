@@ -118,6 +118,9 @@ restartButtonText['fr'] = "encore";
 var supportButtonText = new Array();
 supportButtonText['en'] = "support";
 supportButtonText['fr'] = "soutenir";
+var supportPageUrl = new Array();
+supportPageUrl['en'] = "https://www.patreon.com/beuj";
+supportPageUrl['fr'] = "https://fr.tipeee.com/beuj";
 var needleFoundText = new Array();
 needleFoundText['en'] = "You've found the needle!";
 needleFoundText['fr'] = "Tu as trouvé l'aiguille !";
@@ -755,7 +758,7 @@ function displayScores(jsonScores, id) {
 
     // a link to support page
     var goToSupport = function () {
-        window.open("https://www.patreon.com/beuj", "_blank");
+        window.open(translate(supportPageUrl), "_blank");
     };
     addButton(sLines, supportImg, "supportButton", translate(supportButtonText), goToSupport);
 
