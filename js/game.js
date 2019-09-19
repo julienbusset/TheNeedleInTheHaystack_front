@@ -122,6 +122,9 @@ needleFoundText['fr'] = "Tu as trouvé l'aiguille !";
 var saveRecordButtonText = new Array();
 saveRecordButtonText['en'] = "Save record";
 saveRecordButtonText['fr'] = "Enregistrer le score";
+var loadingText = new Array();
+loadingText['en'] = "Incoming...";
+loadingText['fr'] = "Ça vient..."
 
 /**********
  * I. Main function
@@ -139,6 +142,7 @@ $(document).ready(function () {
     language = window.navigator.userLanguage || window.navigator.language || navigator.browserLanguage || navigator.systemLanguage || "en";
     // use it
     $(".antiresize").find("p").html(translate(noResizeText));
+    $(".pleaseWait").find("p").html(translate(loadingText));
 
     // to avoid blue selection
     $("#mainContainer").addClass("noselect");
