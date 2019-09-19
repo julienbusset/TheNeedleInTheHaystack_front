@@ -57,6 +57,9 @@ const SUPPORT_IMG_FILENAME = "coin.png";
 const FS_ID = "fs";
 
 // 2. Variables
+// flag to know if we play or show the finish screen
+var isPlaying = false;
+
 var hayIdDispo = 0;
 var hayNumber = 1500; // 1500 is default, but it is recalculated from density
 
@@ -161,10 +164,36 @@ $(document).ready(function () {
     // if no id in the URI
     if (!Number.isInteger(extractedId)) {
         // play a new game
+        isPlaying = true;
         letsplay();
     } else {
         // else, show the associated finish screen
+        isPlaying = false;
         showIdFinishScreen(extractedId);
+    }
+});
+
+$(window).on("load", function () {
+    // when everything is loaded, you can put the needle and start playing!
+    if (isPlaying) {
+        stopWaiting();
+        createNeedle();
+
+        // click the needle to win
+        $("#needle").one("click touchstart", function () {
+            timeToWin = Date.now() - start;
+            clearInterval(timerController);
+            displayFinalTime(); // to display it frame perfect!
+            regAndDisplayScores();
+            // on smartphones, the screen is reduced when you enter the name
+            // due to the virtual keyboard
+            enableResizing();
+        });
+
+        // Timer starts!
+        prepareTimer();
+        start = Date.now();
+        timerRoutine();
     }
 });
 
@@ -201,27 +230,7 @@ function letsplay() {
     // handle dragging
     handleDraggables();
 
-    // wait that everything is on screen to build the needle and so on
-    allLoaded().then(function () {
-        stopWaiting();
-        createNeedle();
-
-        // click the needle to win
-        $("#needle").one("click touchstart", function () {
-            timeToWin = Date.now() - start;
-            clearInterval(timerController);
-            displayFinalTime(); // to display it frame perfect!
-            regAndDisplayScores();
-            // on smartphones, the screen is reduced when you enter the name
-            // due to the virtual keyboard
-            enableResizing();
-        });
-
-        // Timer starts!
-        prepareTimer();
-        start = Date.now();
-        timerRoutine();
-    });
+    // Wait that the window finishes to load before starting the game...
 }
 
 // show the finish screen of given id
@@ -234,43 +243,28 @@ async function showIdFinishScreen(id) {
     // and save it to reuse it when resizing the window
     savedFS = fs[0].finishscreen;
 
-    // when images are loaded, recreate the finish screen
-    allLoaded().then(function () {
-        recreateFS();
+    recreateFS();
 
-        // make the canvas rescaling dynamically
-        $(window).resize(function () {
-            getWindowsSize();
-            rescaleFS();
-        });
-
-        stopWaiting();
+    // make the canvas rescaling dynamically
+    $(window).resize(function () {
+        getWindowsSize();
+        rescaleFS();
     });
+
+    stopWaiting();
 }
 
-async function preloadImg() {
+function preloadImg() {
     titleImg = new Image();
 
     spinnerImg = new Image();
 
     needleImg = new Image();
-    needleImg.onload = needleLoaded();
     needleImg.src = SITE_URL + IMG_DIR + NEEDLE_IMG_FILENAME;
 
     hayImg = new Image();
     hayImg.className = "hay draggable";
-    hayImg.onload = hayLoaded();
     hayImg.src = SITE_URL + IMG_DIR + HAY_IMG_FILENAME;
-
-    return allLoaded();
-}
-
-async function allLoaded() {
-    return Promise.all([
-        needleLoaded(),
-        hayLoaded(),
-        windowLoaded()
-    ]);
 }
 
 function loading() {
@@ -278,11 +272,6 @@ function loading() {
     $(".pleaseWait").css("zIndex", hayNumber + 1001);
 }
 
-function windowLoaded() {
-    $(window).on("load", function () {
-        return Promise.resolve();
-    });
-}
 
 /******
  * II. to handle draggable objects (hays, title)
@@ -621,7 +610,7 @@ function regAndDisplayScores() {
         submitButton.attr("disabled", "disabled");
         pleaseWait();
         var pseudo = inputText.val();
-        
+
         var id = await registerScore(pseudo);
         var jsonScores = await getScoresAroundId(id);
 
@@ -757,7 +746,7 @@ function addButton(scoreDiv, image, id, text, clickFunction) {
     scoreDiv.append('<button class="scoreScreenButton" id="' + id + '"></button>');
     $("#" + id).append(image);
     $("#" + id).append('<p class="texte">' + text + '</p>');
-    $("#" + id).click(function(e) {
+    $("#" + id).click(function (e) {
         clickFunction();
     });
 }
